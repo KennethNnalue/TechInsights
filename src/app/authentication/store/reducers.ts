@@ -1,13 +1,15 @@
-import { AuthStateInterface } from '../models/authState.interface'
-import { createFeature, createReducer, on } from '@ngrx/store'
-import { authActions } from './actions'
+import { AuthStateInterface } from '../models/authState.interface';
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { authActions } from './actions';
+import { state } from '@angular/animations';
+import { routerNavigatedAction } from '@ngrx/router-store';
 
 const initialState: AuthStateInterface = {
   isSubmitting: false,
   isLoading: false,
   currentUser: undefined,
   validationErrors: null,
-}
+};
 
 const authFeature = createFeature({
   name: 'auth',
@@ -30,8 +32,33 @@ const authFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
+
+    //Login
+    on(authActions.login, (state) => ({
+      ...state,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+
+    on(authActions.loginSuccess, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      currentUser: action.currentUser,
+      validationErrors: null,
+    })),
+
+    on(authActions.loginFailure, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+
+    on(routerNavigatedAction, (state) => ({
+      ...state,
+      validationErrors: null,
+    })),
   ),
-})
+});
 
 export const {
   name: authFeatureKey,
@@ -40,4 +67,4 @@ export const {
   selectIsLoading,
   selectCurrentUser,
   selectValidationErrors,
-} = authFeature
+} = authFeature;

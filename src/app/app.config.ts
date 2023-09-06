@@ -1,20 +1,24 @@
-import { ApplicationConfig, isDevMode } from '@angular/core'
-import { provideRouter } from '@angular/router'
+import { ApplicationConfig, isDevMode } from '@angular/core';
+import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes'
-import { provideState, provideStore } from '@ngrx/store'
-import { provideStoreDevtools } from '@ngrx/store-devtools'
-import { authFeatureKey, authReducer } from './authentication/store/reducers'
-import { provideHttpClient } from '@angular/common/http'
-import { provideEffects } from '@ngrx/effects'
-import * as authEffects from './authentication/store/effects'
+import { routes } from './app.routes';
+import { provideState, provideStore } from '@ngrx/store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { authFeatureKey, authReducer } from './authentication/store/reducers';
+import { provideHttpClient } from '@angular/common/http';
+import { provideEffects } from '@ngrx/effects';
+import * as authEffects from './authentication/store/effects';
+import { provideRouterStore, routerReducer } from '@ngrx/router-store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
+    provideRouterStore(),
     provideEffects(authEffects),
-    provideStore(),
+    provideStore({
+      router: routerReducer,
+    }),
     provideState(authFeatureKey, authReducer),
     provideStoreDevtools({
       maxAge: 25,
@@ -24,5 +28,6 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     provideEffects(),
+    provideRouterStore(),
   ],
-}
+};
