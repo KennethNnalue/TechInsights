@@ -99,6 +99,12 @@ export const getCurrentUserEffect = createEffect(
     return actions$.pipe(
       ofType(authActions.getCurrentUser),
       switchMap(() => {
+        const token = localStorage.getItem('accessToken');
+
+        //confirm that we have a token before making request to get currentUser otherwise
+        if (!token) {
+          return of(authActions.getCurrentUserFailure());
+        }
         return authService.getCurrentUser().pipe(
           map((currentUser: CurrentUserInterface) => {
             return authActions.getCurrentUserSuccess({ currentUser });
