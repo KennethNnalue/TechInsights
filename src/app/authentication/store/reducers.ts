@@ -53,6 +53,25 @@ const authFeature = createFeature({
       validationErrors: action.errors,
     })),
 
+    //CurrentUser
+    on(authActions.getCurrentUser, (state) => ({
+      ...state,
+      isLoading: true,
+    })),
+    on(authActions.getCurrentUserSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      currentUser: action.currentUser,
+    })),
+
+    //Setting currentUser to null here is very important because it shows we have a current user that is unauthorized
+    on(authActions.getCurrentUserFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      currentUser: null,
+    })),
+
+    // Reset validation errors when we navigate out of component
     on(routerNavigatedAction, (state) => ({
       ...state,
       validationErrors: null,
